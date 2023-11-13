@@ -29,12 +29,13 @@ import (
 
 var (
 	metricsEndpoint = kingpin.Flag("telemetry.endpoint", "Path under which to expose metrics.").Default("/metrics").String()
-	scrapeURI       = kingpin.Flag("scrape_uri", "URI to apache stub status page.").Default("http://localhost/server-status/?auto").String()
-	hostOverride    = kingpin.Flag("host_override", "Override for HTTP Host header; empty string for no override.").Default("").String()
-	insecure        = kingpin.Flag("insecure", "Ignore server certificate if using https.").Bool()
-	toolkitFlags    = kingpinflag.AddFlags(kingpin.CommandLine, ":9117")
-	gracefulStop    = make(chan os.Signal, 1)
-	customHeaders   = kingpin.Flag("custom_headers", "Adds custom headers to the collector.").StringMap()
+
+	scrapeURI     = os.Getenv("SCRAPE_URI")
+	hostOverride  = kingpin.Flag("host_override", "Override for HTTP Host header; empty string for no override.").Default("").String()
+	insecure      = kingpin.Flag("insecure", "Ignore server certificate if using https.").Bool()
+	toolkitFlags  = kingpinflag.AddFlags(kingpin.CommandLine, ":9117")
+	gracefulStop  = make(chan os.Signal, 1)
+	customHeaders = kingpin.Flag("custom_headers", "Adds custom headers to the collector.").StringMap()
 )
 
 func main() {
@@ -53,7 +54,7 @@ func main() {
 	signal.Notify(gracefulStop, syscall.SIGQUIT)
 
 	config := &collector.Config{
-		ScrapeURI:     *scrapeURI,
+		ScrapeURI:     scrapeURI,
 		HostOverride:  *hostOverride,
 		Insecure:      *insecure,
 		CustomHeaders: *customHeaders,
@@ -69,7 +70,7 @@ func main() {
 
 	level.Info(logger).Log("msg", "Starting apache_exporter", "version", version.Info())
 	level.Info(logger).Log("msg", "Build context", "build", version.BuildContext())
-	level.Info(logger).Log("msg", "Collect from: ", "scrape_uri", *scrapeURI)
+	level.Debug(logger).Log("msg", "Collect from: ", "scrape_uri", scrapeURI)
 
 	// listener for the termination signals from the OS
 	go func() {
