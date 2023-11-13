@@ -1,0 +1,10 @@
+commonLabels:
+  object: apache
+
+
+service:
+  type: NodePort
+
+httpdConfConfigMap: apache-http-conf
+
+
