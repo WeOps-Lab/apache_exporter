@@ -45,7 +45,7 @@ spec:
         telegraf.influxdata.com/limits-cpu: '300m'
         telegraf.influxdata.com/limits-memory: '300Mi'
       labels:
-        app: apache-exporter-standalone-{{VERSION}}
+        app: apache-exporter-{{VERSION}}
         exporter_object: apache
         object_mode: standalone
         object_version: {{VERSION}}
@@ -61,13 +61,9 @@ spec:
         securityContext:
           allowPrivilegeEscalation: false
           runAsUser: 0
-        args:
-          -
         env:
-          - name: ES_USERNAME
-            value: weops
-          - name: ES_PASSWORD
-            value: Weops@123
+          - name: SCRAPE_URI
+            value: http://apache-{{VERSION}}.apache:80/server-status?auto
         resources:
           requests:
             cpu: 100m
