@@ -8,6 +8,7 @@
 package main
 
 import (
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	"net/http"
 	"os"
 	"os/signal"
@@ -60,7 +61,11 @@ func main() {
 
 	exporter := collector.NewExporter(logger, config)
 	prometheus.MustRegister(exporter)
+
 	prometheus.MustRegister(version.NewCollector("apache_exporter"))
+
+	// Remove Go collector
+	prometheus.Unregister(collectors.NewGoCollector())
 
 	level.Info(logger).Log("msg", "Starting apache_exporter", "version", version.Info())
 	level.Info(logger).Log("msg", "Build context", "build", version.BuildContext())
