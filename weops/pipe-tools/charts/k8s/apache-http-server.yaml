@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apache-v2-2
+  namespace: apache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: apache-v2-2
+  template:
+    metadata:
+      labels:
+        app: apache-v2-2
+    spec:
+      containers:
+      - name: apache-v2-2
+        image: httpd:2.2
+        ports:
+        - containerPort: 80
+        volumeMounts:
+        - name: apache-config
+          mountPath: /usr/local/apache2/conf/httpd.conf
+          subPath: httpd.conf
+      volumes:
+      - name: apache-config
+        configMap:
+          name: apache-http-conf-v2-2
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apache-v2-2
+  namespace: apache
+spec:
+  selector:
+    app: apache-v2-2
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+      nodePort: 31081
+  type: NodePort

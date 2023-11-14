@@ -8,4 +8,3 @@ helm install $object-v2-4 --namespace $object -f ./values/bitnami_values.yaml ./
   --set commonLabels.object_version=v2-4 \
   --set service.nodePorts.http=31080 \
   --set service.nodePorts.https=31443
-

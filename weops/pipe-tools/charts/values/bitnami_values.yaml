@@ -5,6 +5,6 @@ commonLabels:
 service:
   type: NodePort
 
-httpdConfConfigMap: apache-http-conf
+httpdConfConfigMap: apache-http-conf-v2-4
 
 
